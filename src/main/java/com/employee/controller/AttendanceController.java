@@ -25,8 +25,7 @@ public class AttendanceController {
 	@Autowired
 	private AttandanceService attandanceService;
 	
-	@Autowired
-	private SalaryCalculationServiceImplementation salaryCalculationServiceImplementation;
+
 	
 	//add attendance
 	@PostMapping("/")
@@ -54,9 +53,7 @@ public class AttendanceController {
 	//get all attendance
 	@GetMapping("/")
 	public ResponseEntity<?> getAllAttendances(){
-		System.out.println("going to get all attendesnge");
 		
-		this.salaryCalculationServiceImplementation.salaryCalculationEveryMonth();
 		return ResponseEntity.ok(this.attandanceService.getAllAttendance());
 	}
 	

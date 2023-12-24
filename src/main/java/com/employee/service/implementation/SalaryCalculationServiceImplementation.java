@@ -65,25 +65,19 @@ public class SalaryCalculationServiceImplementation implements SalaryCalculation
 	}
 	
 	
-	//@Scheduled(cron = "@monthly")
+	@Scheduled(cron = "@monthly")
 	public void salaryCalculationEveryMonth() {
-	        // Get the current date
-	        //LocalDateTime currentDate = LocalDateTime.now();
+	        LocalDateTime currentDate = LocalDateTime.now();
 
-	        // Check if a salary calculation has already been completed for the current month
-//	        boolean isCalculationCompleted = salaryCalculationRepository.existsByCalculationDateAndStatus(currentDate, "Completed");
-//
-//	        if (!isCalculationCompleted) {
-//	            // Insert a new row into the "Salary Calculation" table with the current date and a "Pending" status
-//	            SalaryCalculation newCalculation = new SalaryCalculation();
-//	            newCalculation.setCalculationDate(currentDate);
-//	            newCalculation.setStatus("Pending");
-//	            newCalculation.setCreatedAt(LocalDateTime.now());
-//	            newCalculation.setUpdatedAt(LocalDateTime.now());
-//	            this.salaryCalculationRepository.save(newCalculation);
+	            SalaryCalculation newCalculation = new SalaryCalculation();
+	            newCalculation.setCalculationDate(currentDate);
+	            newCalculation.setStatus("Pending");
+	            newCalculation.setCreatedAt(LocalDateTime.now());
+	            newCalculation.setUpdatedAt(LocalDateTime.now());
+	            this.salaryCalculationRepository.save(newCalculation);
 //
 //	            // Retrieve all employee records along with their corresponding attendance records for the previous month
-//	            LocalDateTime previousMonth = currentDate.minusMonths(1);
+	            LocalDateTime previousMonth = currentDate.minusMonths(1);
 	            List<Employee> employees = employeeRepository.findAll();
 
 	            // Calculate and update salary records for each employee
@@ -93,29 +87,40 @@ public class SalaryCalculationServiceImplementation implements SalaryCalculation
 	                List<Attendance> attendanceRecords = attendanceRepository.findByEmployeeId((long) 101);
 	                //List<Attendance> attendanceRecords = attendanceRepository.findByEmployee_employeeId(employee.getEmployeeId());
 
-	                System.out.println("employ attendence ####"+attendanceRecords.toString());
-	                // Calculate salary using the formulas in the Salary table
-	                //BigDecimal calculatedSalary = calculateSalary(employee, attendanceRecords);
+	                //System.out.println("employ attendence ####"+attendanceRecords.toString());
+	                int numberofDay=0;
+	                for(Attendance attred:attendanceRecords)
+	                {
+	                	//System.out.println("intime"+LocalDateTime.parse(attred.getInTime().toString()).getHour());
+	                	//System.out.println("outtime"+LocalDateTime.parse(attred.getOutTime().toString()).getHour());
+	                	int timeTotalWorked=LocalDateTime.parse(attred.getOutTime().toString()).getHour()-LocalDateTime.parse(attred.getInTime().toString()).getHour();
+	                	//System.out.println("month"+LocalDateTime.parse(attred.getInTime().toString()).toLocalDate().getMonthValue());
+	                	//System.out.println("prev month"+previousMonth.getMonthValue());
+	                	int month1=LocalDateTime.parse(attred.getInTime().toString()).toLocalDate().getMonthValue();
+	                	
+	                	if(previousMonth.getMonthValue()==month1 && timeTotalWorked>5)
+	                	{
+	                		numberofDay++;
+	                	}
+	                }
+	                int basepayperday=1000;
+	                int hra=3000;
+	                int da=2000;
+	                int totalSalary=numberofDay*basepayperday;
+	                totalSalary=totalSalary+hra;
+	                totalSalary=totalSalary+da;
+	                
+	             
 
-	                // Update the salary record for the previous month
-	                //Salary salaryRecord = salaryRepository.findByEmployeeAndMonth(employee, previousMonth);
-	                //salaryRecord.setBasicSalary(calculatedSalary); // Assuming you have appropriate fields for salary components
-	                //salaryRepository.save(salaryRecord);
+	               
 	            }
 
 	            // Update the "Salary Calculation" record for the current month with a "Completed" status
-//	            newCalculation.setStatus("Completed");
-//	            salaryCalculationRepository.save(newCalculation);
-//	        }
+	            newCalculation.setStatus("Completed");
+	            salaryCalculationRepository.save(newCalculation);
+
 	    }
-//
-//	    private BigDecimal calculateSalary(Employee employee, List<Attendance> attendanceRecords) {
-//	        // Implement your salary calculation logic here
-//	        // You may use the provided attendance records and any other relevant information
-//	        // to calculate the salary for the employee
-//	        // Return the calculated salary as a BigDecimal
-//	    }
-	
+
 	
 
 	
