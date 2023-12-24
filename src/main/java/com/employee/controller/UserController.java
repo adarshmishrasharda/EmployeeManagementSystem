@@ -1,6 +1,7 @@
 package com.employee.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,9 @@ public class UserController {
 	@Autowired
 	private UserServiceImplementation userServiceImplementation;
 	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	
 	
 	//creating user
@@ -29,6 +33,8 @@ public class UserController {
 	public User createUser(@RequestBody User user) 
 	{
 		System.out.println("going to save user");
+		//encoding password with bcryptpassword encoder
+		user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
 		return this.userServiceImplementation.createUser(user);
 		
 		
